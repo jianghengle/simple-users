@@ -11,7 +11,7 @@ def run_cmd(cmd):
     return result.stdout
 
 def get_user_groups(username):
-    result = run_cmd(['groups', '"' + username + '"'])
+    result = run_cmd(['groups', username])
     ss = result.strip().split(':')
     names = ss[len(ss) - 1].strip().split(' ')
     groups = []
