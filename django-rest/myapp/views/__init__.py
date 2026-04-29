@@ -1,20 +1,17 @@
 from rest_framework.exceptions import PermissionDenied
-import random, string
-import subprocess
-import os
+import random, string, re
+import os, subprocess
 
 
 def get_random_string(n):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
 
-
 def run_cmd(cmd):
     result = subprocess.run(cmd, capture_output=True, text=True, check=True)
     return result.stdout
 
-
 def get_user_groups(username):
-    result = run_cmd(['groups', username])
+    result = run_cmd(['groups', '"' + username + '"'])
     ss = result.strip().split(':')
     names = ss[len(ss) - 1].strip().split(' ')
     groups = []
@@ -25,20 +22,31 @@ def get_user_groups(username):
 
 def file_exists(path):
     try:
-        run_cmd(['sudo', 'ls', path])
+        run_cmd(['ls', path])
         return True
     except:
         return False
 
+def check_key(key):
+    key_path = '/home/.org/org_key'
+    if not file_exists(key_path):
+        raise PermissionDenied({'error': 'Access Denied. No key.'})
+    if run_cmd(['cat', key_path]).strip() != key:
+        raise PermissionDenied({'error': 'Access Denied. Invalid key.'})
 
-def check_admin_or_owner(request):
+def check_username(name):
+    pattern = r'^[a-z][-a-z0-9_]*$'
+    match = re.fullmatch(pattern, name)
+    if not match:
+        raise PermissionDenied({'error': 'Invalid username.'})
+
+def check_permission(request):
+    key = request.data['key']
+    check_key(key)
+
     operator = request.data['operator']
-    operator_key = request.data['operatorKey']
+    check_username(operator)
+
     groups = get_user_groups(operator)
     if 'org-owner' not in groups and 'org-admin' not in groups:
         raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
-    key_path = '/home/.org/' + operator + '/key'
-    if not file_exists(key_path):
-        raise PermissionDenied({'error': 'Access Denied. Invalid Operator Key.'})
-    if run_cmd(['sudo', 'cat', key_path]).strip() != operator_key:
-        raise PermissionDenied({'error': 'Access Denied. Invalid Operator Key.'})
