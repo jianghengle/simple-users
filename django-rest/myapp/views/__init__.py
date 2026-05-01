@@ -1,6 +1,7 @@
 from rest_framework.exceptions import PermissionDenied
 import random, string, re
 import os, subprocess
+from datetime import datetime
 
 
 def get_random_string(n):
@@ -34,19 +35,32 @@ def check_key(key):
     if run_cmd(['cat', key_path]).strip() != key:
         raise PermissionDenied({'error': 'Access Denied. Invalid key.'})
 
-def check_username(name):
+def check_name(name):
     pattern = r'^[a-z][-a-z0-9_]*$'
     match = re.fullmatch(pattern, name)
     if not match:
         raise PermissionDenied({'error': 'Invalid username.'})
+
+def user_exists(username):
+    try:
+        run_cmd(['id', username])
+        return True
+    except:
+        return False
 
 def check_permission(request):
     key = request.data['key']
     check_key(key)
 
     operator = request.data['operator']
-    check_username(operator)
+    check_name(operator)
 
     groups = get_user_groups(operator)
     if 'org-owner' not in groups and 'org-admin' not in groups:
         raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
+
+def log_sudo(sudo_cmd, username):
+    now_string = datetime.now().isoformat()
+    line = now_string + ': ' +  username + ': ' +  ' '.join(sudo_cmd)
+    with open('/home/.org/sudo_logs', 'a') as file:
+        file.write(line + '\n')
