@@ -54,6 +54,8 @@ def check_permission(request):
 
     operator = request.data['operator']
     check_name(operator)
+    if not user_exists(operator):
+        raise PermissionDenied({'error': 'Access Denied. Invalid operator.'})
 
     groups = get_user_groups(operator)
     if 'org-owner' not in groups and 'org-admin' not in groups:
