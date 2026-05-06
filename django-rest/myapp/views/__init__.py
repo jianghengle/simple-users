@@ -8,11 +8,11 @@ def get_random_string(n):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
 
 def run_cmd(cmd):
-    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
     return result.stdout
 
 def get_user_groups(username):
-    result = run_cmd(['groups', username])
+    result = run_cmd('groups ' + username)
     ss = result.strip().split(':')
     names = ss[len(ss) - 1].strip().split(' ')
     groups = []
@@ -23,7 +23,7 @@ def get_user_groups(username):
 
 def file_exists(path):
     try:
-        run_cmd(['ls', path])
+        run_cmd('ls ' + path)
         return True
     except:
         return False
@@ -32,7 +32,7 @@ def check_key(key):
     key_path = '/home/.org/org_key'
     if not file_exists(key_path):
         raise PermissionDenied({'error': 'Access Denied. No key.'})
-    if run_cmd(['cat', key_path]).strip() != key:
+    if run_cmd('cat ' + key_path).strip() != key:
         raise PermissionDenied({'error': 'Access Denied. Invalid key.'})
 
 def check_name(name):
@@ -43,7 +43,7 @@ def check_name(name):
 
 def user_exists(username):
     try:
-        run_cmd(['id', username])
+        run_cmd('id ' + username)
         return True
     except:
         return False

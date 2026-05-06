@@ -12,7 +12,7 @@ from . import run_cmd, check_permission, check_name, user_exists, log_sudo
 def get_org_users(request):
     check_permission(request)
 
-    result = run_cmd(['getent', 'group', 'org-user'])
+    result = run_cmd('getent group org-user')
     ss = result.strip().split(':')
     names = ss[len(ss) - 1].split(',')
     users = []
@@ -30,10 +30,10 @@ def add_new_user(request):
     if user_exists(username):
         raise PermissionDenied({'error': 'User exists.'})
 
-    sudo_cmd = ['sudo', 'adduser', '--disabled-password', '--gecos', '""', username]
+    sudo_cmd = 'sudo adduser --disabled-password --gecos "" ' + username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, operator)
-    sudo_cmd = ['sudo', 'usermod', '-aG', 'org-user', username]
+    sudo_cmd = 'sudo usermod -aG org-user ' + username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, operator)
     return Response({'ok': True})
@@ -78,7 +78,7 @@ def change_password(request):
     if re.search(r"\s", password):
         raise PermissionDenied({'error': 'Password contains whitespace.'})
 
-    sudo_cmd = ['echo', "'" + username + ':' + password + "'", '|', 'sudo', 'chpasswd']
+    sudo_cmd = 'echo ' + "'" + username + ':' + password + "'" + ' | sudo chpasswd'
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
 
