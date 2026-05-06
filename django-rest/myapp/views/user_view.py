@@ -78,7 +78,7 @@ def change_password(request):
     if re.search(r"\s", password):
         raise PermissionDenied({'error': 'Password contains whitespace.'})
 
-    sudo_cmd = ['echo', username + ':' + password, '|', 'sudo', 'chpasswd']
+    sudo_cmd = ['echo', '"' + username + ':' + password + '"', '|', 'sudo', 'chpasswd']
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
 
