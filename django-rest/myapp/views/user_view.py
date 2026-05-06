@@ -4,9 +4,6 @@ import re
 from datetime import datetime, timezone, timedelta
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from . import run_cmd, check_permission, check_name, user_exists, log_sudo
 
@@ -27,6 +24,7 @@ def get_org_users(request):
 @api_view(['POST'])
 def add_new_user(request):
     check_permission(request)
+    operator = request.data['operator']
     username = request.data['username']
     check_name(username)
     if user_exists(username):
@@ -34,10 +32,10 @@ def add_new_user(request):
 
     sudo_cmd = ['sudo', 'adduser', '--disabled-password', '--gecos', '""', username]
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, username)
+    log_sudo(sudo_cmd, operator)
     sudo_cmd = ['sudo', 'usermod', '-aG', 'org-user', username]
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, username)
+    log_sudo(sudo_cmd, operator)
     return Response({'ok': True})
 
 @api_view(['POST'])
