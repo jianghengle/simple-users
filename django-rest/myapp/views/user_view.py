@@ -1,16 +1,41 @@
 import os
 import uuid
 import re
+import secrets
 from datetime import datetime, timezone, timedelta
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied
-from . import run_cmd, check_permission, check_name, user_exists, log_sudo
+from . import *
+
+
+@api_view(['POST'])
+def login_user(request):
+    username = request.data['username']
+    check_name(username)
+    if not user_exists(username):
+        raise PermissionDenied({'error': 'User does not exist.'})
+
+    password = request.data['password']
+    if re.search(r"\s", password) or '"' in password:
+        raise PermissionDenied({'error': 'Password contains invalid character'})
+    
+    cmd = 'echo "' + password + '" | su -c "whoami" ' + username
+    try:
+        run_cmd(cmd)
+    except Exception as e:
+        print(e)
+        raise PermissionDenied({'error': 'Invalid username or password'})
+    token = secrets.token_urlsafe(64)
+    session_file = '/home/.org/' + username + '_session'
+    with open(session_file, 'w') as file:
+        file.write(token)
+    return Response(token)
 
 
 @api_view(['POST'])
 def get_org_users(request):
-    check_permission(request)
+    check_user_permission(request)
 
     result = run_cmd('getent group org-user')
     ss = result.strip().split(':')
@@ -36,6 +61,7 @@ def add_new_user(request):
     sudo_cmd = 'sudo usermod -aG org-user ' + username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, operator)
+    add_user_to_mail_group(username, 'all')
     return Response({'ok': True})
 
 @api_view(['POST'])
@@ -83,4 +109,34 @@ def change_password(request):
     log_sudo(sudo_cmd, username)
 
     os.remove(key_file)
+    return Response({'ok': True})
+
+@api_view(['POST'])
+def lock_user(request):
+    check_permission(request)
+    operator = request.data['operator']
+    username = request.data['username']
+    check_name(username)
+    if not user_exists(username):
+        raise PermissionDenied({'error': 'User not exists.'})
+
+    sudo_cmd = 'sudo passwd -l ' + username
+    run_cmd(sudo_cmd)
+    log_sudo(sudo_cmd, operator)
+    remove_user_from_mail_group(username, 'all')
+    return Response({'ok': True})
+
+@api_view(['POST'])
+def unlock_user(request):
+    check_permission(request)
+    operator = request.data['operator']
+    username = request.data['username']
+    check_name(username)
+    if not user_exists(username):
+        raise PermissionDenied({'error': 'User not exists.'})
+
+    sudo_cmd = 'sudo passwd -u ' + username
+    run_cmd(sudo_cmd)
+    log_sudo(sudo_cmd, operator)
+    add_user_to_mail_group(username, 'all')
     return Response({'ok': True})
