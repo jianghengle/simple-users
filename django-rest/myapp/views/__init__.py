@@ -30,6 +30,16 @@ def get_group_users(group):
             users.append(name.strip())
     return users
 
+def get_locked_users():
+    cmd = 'sudo passwd -S -a | grep " L "'
+    result = run_cmd(cmd)
+    users = []
+    for line in result.split('\n'):
+        if line.strip():
+            ss = line.strip().split(' ')
+            users.append(ss[0])
+    return users
+
 def file_exists(path):
     try:
         run_cmd('ls ' + path)
@@ -101,7 +111,7 @@ def get_group_mail_users():
                 continue
             (key, value) = line.strip().split(':')
             group = key.strip()
-            if group in DEFAULT_GROUPS:
+            if group in DEFAULT_GROUPS and group != 'all':
                 continue
             users = []
             for v in value.strip().split(','):
@@ -163,11 +173,11 @@ def remove_user_from_mail_group(user, group):
                     users.append(v.strip())
             if user in users:
                 users.remove(user)
+                changed = True
                 if not users:
                     continue
                 new_line = group + ': ' + (', '.join(users))
                 new_lines.append(new_line)
-                changed = True
             else:
                 new_lines.append(line.strip())
     

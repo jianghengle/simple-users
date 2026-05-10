@@ -40,15 +40,18 @@ def get_org_users(request):
     users = get_group_users('org-user')
     admins = get_group_users('org-admin')
     owners = get_group_users('org-owner')
+    locked_users = get_locked_users()
 
     result = []
     for u in users:
-        user = {'username': u, 'role': 'user'}
+        user = {'username': u, 'role': 'user', 'status': 'active'}
         if u in owners:
             user['role'] = 'owner'
         elif u in admins:
             user['role'] = 'admin'
-
+        if u in locked_users:
+            user['status'] = 'locked'
+        result.append(user)
     return Response(result)
 
 
@@ -138,13 +141,12 @@ def lock_user(request):
     if not user_exists(action_username):
         raise PermissionDenied({'error': 'Action user not exists.'})
     action_user_groups = get_user_groups(action_username)
-    if 'org-owner' not in action_user_groups and 'org-admin' not in action_user_groups:
+    if 'org-owner' in action_user_groups or 'org-admin' in action_user_groups:
         raise PermissionDenied({'error': 'Action cannot apply to org-owner or org-admin.'})
 
     sudo_cmd = 'sudo passwd -l ' + action_username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
-    remove_user_from_mail_group(action_username, 'all')
     return Response({'ok': True})
 
 
@@ -162,5 +164,4 @@ def unlock_user(request):
     sudo_cmd = 'sudo passwd -u ' + action_username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
-    add_user_to_mail_group(action_username, 'all')
     return Response({'ok': True})
