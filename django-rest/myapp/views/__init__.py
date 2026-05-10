@@ -6,9 +6,6 @@ from datetime import datetime, timedelta
 DEFAULT_GROUPS = ['postmaster', 'root', 'all']
 ORG_ALIASES = '/home/.org/aliases'
 
-def get_random_string(n):
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
-
 def run_cmd(cmd):
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True)
     return result.stdout
@@ -23,13 +20,23 @@ def get_user_groups(username):
             groups.append(name.strip())
     return groups
 
+def get_group_users(group):
+    result = run_cmd('getent group ' + group)
+    ss = result.strip().split(':')
+    names = ss[len(ss) - 1].split(',')
+    users = []
+    for name in names:
+        if name.strip():
+            users.append(name.strip())
+    return users
+
 def file_exists(path):
     try:
         run_cmd('ls ' + path)
         return True
     except:
         return False
-    
+
 def check_token(username, token):
     file_path = '/home/.org/' + username + '_session'
     if not file_exists(file_path):
@@ -42,13 +49,6 @@ def check_token(username, token):
         raise PermissionDenied({'error': 'Session expired.'})
     if run_cmd('cat ' + file_path).strip() != token:
         raise PermissionDenied({'error': 'Access Denied. Invalid token.'})
-
-def check_key(key):
-    key_path = '/home/.org/org_key'
-    if not file_exists(key_path):
-        raise PermissionDenied({'error': 'Access Denied. No key.'})
-    if run_cmd('cat ' + key_path).strip() != key:
-        raise PermissionDenied({'error': 'Access Denied. Invalid key.'})
 
 def check_name(name):
     pattern = r'^[a-z][-a-z0-9_]*$'
@@ -70,24 +70,18 @@ def check_user_permission(request):
         raise PermissionDenied({'error': 'Access Denied. Invalid username.'})
 
     token = request.data['token']
-    check_token(token)
+    check_token(username, token)
 
     groups = get_user_groups(username)
     if 'org-user' not in groups:
         raise PermissionDenied({'error': 'Access Denied. Not in user group.'})
+    return groups
 
-def check_permission(request):
-    key = request.data['key']
-    check_key(key)
-
-    operator = request.data['operator']
-    check_name(operator)
-    if not user_exists(operator):
-        raise PermissionDenied({'error': 'Access Denied. Invalid operator.'})
-
-    groups = get_user_groups(operator)
+def check_admin_permission(request):
+    groups = check_user_permission(request)
     if 'org-owner' not in groups and 'org-admin' not in groups:
         raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
+    return groups
 
 def log_sudo(sudo_cmd, username):
     now_string = datetime.now().isoformat()

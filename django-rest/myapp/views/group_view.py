@@ -9,17 +9,18 @@ from . import *
 
 @api_view(['POST'])
 def get_org_groups(request):
-    check_permission(request)
+    check_user_permission(request)
     group_users = get_group_mail_users()
     return Response(group_users)
 
+
 @api_view(['POST'])
 def add_user_to_group(request):
-    check_permission(request)
+    check_admin_permission(request)
 
-    user = request.data['user']
-    check_name(user)
-    if not user_exists(user):
+    action_username = request.data['actionUsername']
+    check_name(action_username)
+    if not user_exists(action_username):
         raise PermissionDenied({'error': 'User does not exist.'})
     
     group = request.data['group']
@@ -27,27 +28,29 @@ def add_user_to_group(request):
     if group in DEFAULT_GROUPS:
         raise PermissionDenied({'error': 'Cannot change default groups'})
     
-    add_user_to_mail_group(user, group)
+    add_user_to_mail_group(action_username, group)
     return Response({'ok': True})
+
 
 @api_view(['POST'])
 def remove_user_from_group(request):
-    check_permission(request)
+    check_admin_permission(request)
 
-    user = request.data['user']
-    check_name(user)
+    action_username = request.data['actionUsername']
+    check_name(action_username)
     
     group = request.data['group']
     check_name(group)
     if group in DEFAULT_GROUPS:
         raise PermissionDenied({'error': 'Cannot change default groups'})
     
-    remove_user_from_mail_group(user, group)
+    remove_user_from_mail_group(action_username, group)
     return Response({'ok': True})
+
 
 @api_view(['POST'])
 def remove_group(request):
-    check_permission(request)
+    check_admin_permission(request)
     
     group = request.data['group']
     check_name(group)

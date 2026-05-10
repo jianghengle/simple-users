@@ -30,113 +30,137 @@ def login_user(request):
     session_file = '/home/.org/' + username + '_session'
     with open(session_file, 'w') as file:
         file.write(token)
-    return Response(token)
+    return Response({'token': token})
 
 
 @api_view(['POST'])
 def get_org_users(request):
     check_user_permission(request)
 
-    result = run_cmd('getent group org-user')
-    ss = result.strip().split(':')
-    names = ss[len(ss) - 1].split(',')
-    users = []
-    for name in names:
-        if name.strip():
-            users.append(name.strip())
-    return Response(users)
+    users = get_group_users('org-user')
+    admins = get_group_users('org-admin')
+    owners = get_group_users('org-owner')
+
+    result = []
+    for u in users:
+        user = {'username': u, 'role': 'user'}
+        if u in owners:
+            user['role'] = 'owner'
+        elif u in admins:
+            user['role'] = 'admin'
+
+    return Response(result)
+
 
 @api_view(['POST'])
 def add_new_user(request):
-    check_permission(request)
-    operator = request.data['operator']
+    check_admin_permission(request)
     username = request.data['username']
-    check_name(username)
-    if user_exists(username):
+    new_username = request.data['newUsername']
+    check_name(new_username)
+    if user_exists(new_username):
         raise PermissionDenied({'error': 'User exists.'})
 
-    sudo_cmd = 'sudo adduser --disabled-password --gecos "" ' + username
+    sudo_cmd = 'sudo adduser --disabled-password --gecos "" ' + new_username
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, operator)
-    sudo_cmd = 'sudo usermod -aG org-user ' + username
+    log_sudo(sudo_cmd, username)
+    sudo_cmd = 'sudo usermod -aG org-user ' + new_username
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, operator)
+    log_sudo(sudo_cmd, username)
     add_user_to_mail_group(username, 'all')
     return Response({'ok': True})
 
-@api_view(['POST'])
-def get_reset_password_key(request):
-    check_permission(request)
-    username = request.data['username']
-    check_name(username)
-    if not user_exists(username):
-        raise PermissionDenied({'error': 'User does not exist.'})
-
-    key = str(uuid.uuid4())
-    key_file = '/home/.org/' + username + '_reset_key'
-    with open(key_file, 'w') as file:
-        file.write(key)
-
-    return Response({'key': key})
 
 @api_view(['POST'])
 def change_password(request):
     username = request.data['username']
-    check_name(username)
-    if not user_exists(username):
-        raise PermissionDenied({'error': 'User does not exist.'})
+    groups = check_user_permission(request)
+    action_username = request.data['actionUsername']
+    if action_username != username:
+        check_name(action_username)
+        if not user_exists(action_username):
+            raise PermissionDenied({'error': 'Action user does not exist.'})
+        if 'org-owner' not in groups and 'org-admin' not in groups:
+            raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
 
-    key = request.data['key']
-    key_file = '/home/.org/' + username + '_reset_key'
-    if not os.path.exists(key_file):
-        raise PermissionDenied({'error': 'Invalid key.'})
-    timestamp = os.path.getmtime(key_file)
-    modified_date = datetime.fromtimestamp(timestamp)
-    now = datetime.now()
-    if now > modified_date + timedelta(days=3):
-        raise PermissionDenied({'error': 'Key expired.'})
-    with open(key_file, 'r') as file:
-        content = file.read()
-        if content != key:
-            raise PermissionDenied({'error': 'Invalid key.'})
+    new_password = request.data['newPassword']
+    if re.search(r"\s", new_password):
+        raise PermissionDenied({'error': 'New password contains whitespace.'})
 
-    password = request.data['password']
-    if re.search(r"\s", password):
-        raise PermissionDenied({'error': 'Password contains whitespace.'})
-
-    sudo_cmd = 'echo ' + "'" + username + ':' + password + "'" + ' | sudo chpasswd'
+    sudo_cmd = 'echo ' + "'" + action_username + ':' + new_password + "'" + ' | sudo chpasswd'
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
 
-    os.remove(key_file)
     return Response({'ok': True})
+
+
+@api_view(['POST'])
+def change_role(request):
+    check_admin_permission(request)
+    username = request.data['username']
+
+    action_username = request.data['actionUsername']
+    if username == action_username:
+        raise PermissionDenied({'error': 'Cannot action on self'})
+    check_name(action_username)
+    if not user_exists(action_username):
+        raise PermissionDenied({'error': 'Action user does not exist.'})
+
+    action_user_groups = get_user_groups(action_username)
+    if 'org-owner' in action_user_groups:
+        raise PermissionDenied({'error': 'Cannot action on owner'})
+
+    new_role = request.data['newRole']
+    if new_role not in ['admin', 'user']:
+        raise PermissionDenied({'error': 'Invalid role'})
+
+    if 'org-admin' in action_user_groups and new_role == 'user':
+        sudo_cmd = 'sudo deluser ' + action_username + ' org-admin'
+        run_cmd(sudo_cmd)
+        log_sudo(sudo_cmd, username)
+
+    if 'org-admin' not in action_user_groups and new_role == 'admin':
+        sudo_cmd = 'sudo usermod -aG org-admin ' + action_username
+        run_cmd(sudo_cmd)
+        log_sudo(sudo_cmd, username)
+
+    return Response({'ok': True})
+
 
 @api_view(['POST'])
 def lock_user(request):
-    check_permission(request)
-    operator = request.data['operator']
+    check_admin_permission(request)
     username = request.data['username']
-    check_name(username)
-    if not user_exists(username):
-        raise PermissionDenied({'error': 'User not exists.'})
+    action_username = request.data['actionUsername']
+    if username == action_username:
+        raise PermissionDenied({'error': 'Cannot action on yourself'})
 
-    sudo_cmd = 'sudo passwd -l ' + username
+    if not user_exists(action_username):
+        raise PermissionDenied({'error': 'Action user not exists.'})
+    action_user_groups = get_user_groups(action_username)
+    if 'org-owner' not in action_user_groups and 'org-admin' not in action_user_groups:
+        raise PermissionDenied({'error': 'Action cannot apply to org-owner or org-admin.'})
+
+    sudo_cmd = 'sudo passwd -l ' + action_username
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, operator)
-    remove_user_from_mail_group(username, 'all')
+    log_sudo(sudo_cmd, username)
+    remove_user_from_mail_group(action_username, 'all')
     return Response({'ok': True})
+
 
 @api_view(['POST'])
 def unlock_user(request):
-    check_permission(request)
-    operator = request.data['operator']
+    check_admin_permission(request)
     username = request.data['username']
-    check_name(username)
-    if not user_exists(username):
-        raise PermissionDenied({'error': 'User not exists.'})
+    action_username = request.data['actionUsername']
+    if username == action_username:
+        raise PermissionDenied({'error': 'Cannot action on yourself'})
 
-    sudo_cmd = 'sudo passwd -u ' + username
+    if not user_exists(action_username):
+        raise PermissionDenied({'error': 'Action user not exists.'})
+
+    sudo_cmd = 'sudo passwd -u ' + action_username
     run_cmd(sudo_cmd)
-    log_sudo(sudo_cmd, operator)
-    add_user_to_mail_group(username, 'all')
+    log_sudo(sudo_cmd, username)
+    add_user_to_mail_group(action_username, 'all')
     return Response({'ok': True})
