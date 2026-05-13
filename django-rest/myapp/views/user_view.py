@@ -30,7 +30,15 @@ def login_user(request):
     session_file = '/home/.org/' + username + '_session'
     with open(session_file, 'w') as file:
         file.write(token)
-    return Response({'token': token})
+    groups = get_user_groups(username)
+    if 'org-user' not in groups:
+        raise PermissionDenied({'error': 'Access Denied. Not in user group.'})
+    role = 'user'
+    if 'org-admin' in groups:
+        role = 'admin'
+    if 'org-owner' in groups:
+        role = 'owner'
+    return Response({'username': username,  'token': token, 'role': role})
 
 
 @api_view(['POST'])
