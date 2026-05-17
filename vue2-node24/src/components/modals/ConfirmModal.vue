@@ -1,6 +1,5 @@
 <template>
-  <div class="modal"
-      :class="{'is-active': opened}">
+  <div class="modal" :class="{'is-active': opened}">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
@@ -8,11 +7,13 @@
         <button class="delete" @click="close"></button>
       </header>
       <section class="modal-card-body">
-          <div>{{message}}</div>
+        <div>{{message}}</div>
       </section>
       <footer class="modal-card-foot">
-        <a class="button is-danger" @click="confirm">{{button}}</a>
-        <a class="button" @click="close">Cancel</a>
+        <div class="buttons">
+          <a class="button is-danger" @click="confirm">{{button}}</a>
+          <a class="button" @click="close">Cancel</a>
+        </div>
       </footer>
     </div>
   </div>

@@ -38,7 +38,7 @@ def login_user(request):
         role = 'admin'
     if 'org-owner' in groups:
         role = 'owner'
-    return Response({'username': username,  'token': token, 'role': role})
+    return Response({'username': username, 'token': token, 'role': role})
 
 
 @api_view(['POST'])
@@ -48,17 +48,17 @@ def get_org_users(request):
     users = get_group_users('org-user')
     admins = get_group_users('org-admin')
     owners = get_group_users('org-owner')
-    locked_users = get_locked_users()
+    users_status = get_users_status(users)
 
     result = []
     for u in users:
-        user = {'username': u, 'role': 'user', 'status': 'active'}
+        user = {'username': u, 'role': 'user', 'status': 'unknown'}
         if u in owners:
             user['role'] = 'owner'
         elif u in admins:
             user['role'] = 'admin'
-        if u in locked_users:
-            user['status'] = 'locked'
+        if u in users_status:
+            user['status'] = users_status[u]
         result.append(user)
     return Response(result)
 

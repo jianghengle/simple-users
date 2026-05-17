@@ -40,6 +40,24 @@ def get_locked_users():
             users.append(ss[0])
     return users
 
+def get_users_status(users):
+    cmd = 'sudo cat /etc/shadow'
+    result = run_cmd(cmd)
+    status = {}
+    for line in result.split('\n'):
+        if line.strip():
+            ss = line.strip().split(':')
+            if ss[0] in users:
+                if ss[1] == '!':
+                    status[ss[0]] = 'password not set'
+                elif ss[1].startswith('!$'):
+                    status[ss[0]] = 'locked'
+                elif ss[1].startswith('$') and len(ss[1]) > 6:
+                    status[ss[0]] = 'active'
+                else:
+                    status[ss[0]] = 'unknown'
+    return status
+
 def file_exists(path):
     try:
         run_cmd('ls ' + path)
@@ -100,7 +118,7 @@ def log_sudo(sudo_cmd, username):
         file.write(line + '\n')
 
 def get_group_mail_users():
-    group_users = {}
+    group_users = []
     with open(ORG_ALIASES, 'r') as file:
         for line in file:
             if line.startswith('#'):
@@ -117,7 +135,7 @@ def get_group_mail_users():
             for v in value.strip().split(','):
                 if v.strip():
                     users.append(v.strip())
-            group_users[group] = users
+            group_users.append({'group': group, 'users': users})
     return group_users
 
 def add_user_to_mail_group(user, group):
