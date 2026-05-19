@@ -228,3 +228,5 @@ def remove_mail_group(group):
 def overwrite_aliases():
     sudo_cmd = 'sudo cp ' + ORG_ALIASES + ' /etc/'
     run_cmd(sudo_cmd)
+    sudo_cmd = 'sudo newaliases'
+    run_cmd(sudo_cmd)

@@ -78,7 +78,7 @@ def add_new_user(request):
     sudo_cmd = 'sudo usermod -aG org-user ' + new_username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
-    add_user_to_mail_group(username, 'all')
+    add_user_to_mail_group(new_username, 'all')
     return Response({'ok': True})
 
 

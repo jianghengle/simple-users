@@ -25,6 +25,7 @@
               <i class="fas fa-key"></i>
             </span>
           </div>
+          <p class="help is-info">Default password: 123456</p>
         </div>
 
         <div class="field">
@@ -227,8 +228,8 @@ export default {
   },
   data () {
     return {
-      username: '',
-      password: '',
+      username: 'demo-admin',
+      password: '123456',
       rememberMe: true,
       error: '',
       waiting: false,
