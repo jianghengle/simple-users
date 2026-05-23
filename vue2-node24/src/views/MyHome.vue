@@ -89,12 +89,12 @@
               <tr v-for="(u, index) in allUsers" v-if="u.status != 'locked' || showLocked">
                 <td :class="{'has-text-weight-bold': myUsername == u.username}">{{ index + 1 }}</td>
                 <td>
-                  <span :class="{'has-text-weight-bold': myUsername == u.username, 'strikethrough': u.status == 'locked'}">{{ u.username }}</span>&nbsp;
+                  <span :class="{'has-text-weight-bold': myUsername == u.username, 'strikethrough': u.status == 'locked', 'has-text-grey-light': u.status == 'locked'}">{{ u.username }}</span>&nbsp;
                   <span class="tag is-warning" v-if="u.status == 'password not set'">{{ u.status }}</span>
                   <span class="tag is-light" v-if="u.status == 'locked'">{{ u.status }}</span>
                 </td>
                 <td>
-                  <span :class="{'has-text-weight-bold': myUsername == u.username}" v-if="!canEditRole(u)">{{ u.role }}</span>
+                  <span :class="{'has-text-weight-bold': myUsername == u.username, 'has-text-grey-light': u.status == 'locked'}" v-if="!canEditRole(u)">{{ u.role }}</span>
                   <a v-if="canEditRole(u) && roleEdit != u.username" @click="roleEdit = u.username">{{ u.role }}</a>
                   <div class="select" v-if="canEditRole(u) && roleEdit == u.username">
                     <select v-model="u.role" @change="userRoleChanged(u)">
@@ -188,8 +188,8 @@
             <tbody>
               <tr v-for="(u, index) in groupUserRoles[currentGroup]" v-if="u.status != 'locked' || showLocked">
                 <td :class="{'has-text-weight-bold': myUsername == u.username}">{{ index + 1 }}</td>
-                <td :class="{'has-text-weight-bold': myUsername == u.username, 'strikethrough': u.status == 'locked'}">{{ u.username }}</td>
-                <td :class="{'has-text-weight-bold': myUsername == u.username}">{{ u.role }}</td>
+                <td :class="{'has-text-weight-bold': myUsername == u.username, 'strikethrough': u.status == 'locked', 'has-text-grey-light': u.status == 'locked'}">{{ u.username }}</td>
+                <td :class="{'has-text-weight-bold': myUsername == u.username, 'has-text-grey-light': u.status == 'locked'}">{{ u.role }}</td>
                 <td>
                   <p class="buttons">
                     <button class="button is-small" v-if="canCurrentGroupRemoveUser" @click="currentGroupRemoveUser(u)">
@@ -409,6 +409,9 @@ export default {
       if (u.role == 'owner') {
         return false
       }
+      if (u.status == 'locked') {
+        return false
+      }
       if (this.myUsername == u.username) {
         return false
       }
@@ -511,6 +514,9 @@ export default {
       this.addUserModal.opened = false
     },
     canChangePassword (u) {
+      if (u.status == 'locked') {
+        return false
+      }
       if (this.myRole == 'user') {
         return this.myUsername == u.username
       }

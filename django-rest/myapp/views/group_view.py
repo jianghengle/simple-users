@@ -22,6 +22,9 @@ def add_user_to_group(request):
     check_name(action_username)
     if not user_exists(action_username):
         raise PermissionDenied({'error': 'User does not exist.'})
+    action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
     
     group = request.data['group']
     check_name(group)
@@ -38,6 +41,11 @@ def remove_user_from_group(request):
 
     action_username = request.data['actionUsername']
     check_name(action_username)
+    if not user_exists(action_username):
+        raise PermissionDenied({'error': 'User does not exist.'})
+    action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
     
     group = request.data['group']
     check_name(group)

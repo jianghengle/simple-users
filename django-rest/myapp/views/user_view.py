@@ -17,8 +17,8 @@ def login_user(request):
         raise PermissionDenied({'error': 'User does not exist.'})
 
     password = request.data['password']
-    if re.search(r"\s", password) or '"' in password:
-        raise PermissionDenied({'error': 'Password contains invalid character'})
+    if re.search(r"\s", password) or '"' in password or "'" in password:
+        raise PermissionDenied({'error': 'Password contains invalid characters'})
     
     cmd = 'echo "' + password + '" | su -c "whoami" ' + username
     try:
@@ -91,6 +91,8 @@ def change_password(request):
         check_name(action_username)
         if not user_exists(action_username):
             raise PermissionDenied({'error': 'Action user does not exist.'})
+        if 'org-user' not in get_user_groups(action_username):
+            raise PermissionDenied({'error': 'Access Denied. Wrong user.'})
         if 'org-owner' not in groups and 'org-admin' not in groups:
             raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
 
@@ -118,6 +120,8 @@ def change_role(request):
         raise PermissionDenied({'error': 'Action user does not exist.'})
 
     action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
     if 'org-owner' in action_user_groups:
         raise PermissionDenied({'error': 'Cannot action on owner'})
 
@@ -149,6 +153,8 @@ def lock_user(request):
     if not user_exists(action_username):
         raise PermissionDenied({'error': 'Action user not exists.'})
     action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
     if 'org-owner' in action_user_groups or 'org-admin' in action_user_groups:
         raise PermissionDenied({'error': 'Action cannot apply to org-owner or org-admin.'})
 
@@ -168,6 +174,9 @@ def unlock_user(request):
 
     if not user_exists(action_username):
         raise PermissionDenied({'error': 'Action user not exists.'})
+    action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
 
     sudo_cmd = 'sudo passwd -u ' + action_username
     run_cmd(sudo_cmd)
