@@ -58,6 +58,18 @@ def get_users_status(users):
                     status[ss[0]] = 'unknown'
     return status
 
+def get_user_fullnames(users):
+    cmd = 'cat /etc/passwd'
+    result = run_cmd(cmd)
+    fullnames = {}
+    for line in result.split('\n'):
+        if line.strip():
+            ss = line.strip().split(':')
+            if ss[0] in users:
+                fullname = ss[4].split(',')[0]
+                fullnames[ss[0]] = fullname
+    return fullnames
+
 def file_exists(path):
     try:
         run_cmd('ls ' + path)
@@ -83,6 +95,11 @@ def check_name(name):
     match = re.fullmatch(pattern, name)
     if not match:
         raise PermissionDenied({'error': 'Invalid name.'})
+
+def check_space_or_quote(text):
+    found = re.search(r"\s", text) or '"' in text or "'" in text
+    if found:
+        raise PermissionDenied({'error': 'Contains invalid charactors.'})
 
 def user_exists(username):
     try:

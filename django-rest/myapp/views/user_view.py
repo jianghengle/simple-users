@@ -17,8 +17,7 @@ def login_user(request):
         raise PermissionDenied({'error': 'User does not exist.'})
 
     password = request.data['password']
-    if re.search(r"\s", password) or '"' in password or "'" in password:
-        raise PermissionDenied({'error': 'Password contains invalid characters'})
+    check_space_or_quote(password)
     
     cmd = 'echo "' + password + '" | su -c "whoami" ' + username
     try:
@@ -49,10 +48,11 @@ def get_org_users(request):
     admins = get_group_users('org-admin')
     owners = get_group_users('org-owner')
     users_status = get_users_status(users)
+    fullnames = get_user_fullnames(users)
 
     result = []
     for u in users:
-        user = {'username': u, 'role': 'user', 'status': 'unknown'}
+        user = {'username': u, 'role': 'user', 'status': 'unknown', 'fullname': fullnames.get(u, '')}
         if u in owners:
             user['role'] = 'owner'
         elif u in admins:
@@ -71,8 +71,10 @@ def add_new_user(request):
     check_name(new_username)
     if user_exists(new_username):
         raise PermissionDenied({'error': 'User exists.'})
+    fullname = request.data['fullname']
+    check_space_or_quote(fullname)
 
-    sudo_cmd = 'sudo adduser --disabled-password --gecos "" ' + new_username
+    sudo_cmd = 'sudo adduser --disabled-password --gecos "' + fullname + '" ' + new_username
     run_cmd(sudo_cmd)
     log_sudo(sudo_cmd, username)
     sudo_cmd = 'sudo usermod -aG org-user ' + new_username
@@ -97,8 +99,7 @@ def change_password(request):
             raise PermissionDenied({'error': 'Access Denied. Need org-owner or org-admin permission.'})
 
     new_password = request.data['newPassword']
-    if re.search(r"\s", new_password):
-        raise PermissionDenied({'error': 'New password contains whitespace.'})
+    check_space_or_quote(new_password)
 
     sudo_cmd = 'echo ' + "'" + action_username + ':' + new_password + "'" + ' | sudo chpasswd'
     run_cmd(sudo_cmd)
