@@ -62,17 +62,47 @@ export default {
     server () {
       return this.$store.state.config.server
     },
-    orgWorkflowConfigs () {
-      return this.$store.state.org.orgWorkflowConfigs
+    myUsername () {
+      return this.$store.state.user.username
     },
   },
   methods: {
     signout () {
       this.$store.commit('user/reset')
     },
+    getUsers () {
+      var message = {
+        username: this.myUsername,
+        token: this.token,
+      }
+      this.$http.post(this.server + '/myapp/get-org-users/', message).then(resp => {
+        this.$store.commit('org/setUsersMap', resp.body)
+      }, err => {
+        this.error = err.body
+        this.$store.commit('user/reset')
+        this.$store.commit('org/reset')
+        if (this.routerPath != '/') {
+          this.$router.push('/')
+        }
+      })
+    },
+    getGroups () {
+      var message = {
+        username: this.myUsername,
+        token: this.token,
+      }
+      this.$http.post(this.server + '/myapp/get-org-groups/', message).then(resp => {
+        this.$store.commit('org/setGroups', resp.body)
+      }, err => {
+        this.error = err.body
+      })
+    },
   },
   mounted () {
-
+    if (this.token) {
+      this.getUsers()
+      this.getGroups()
+    }
   }
 }
 </script>

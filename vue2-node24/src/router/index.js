@@ -14,13 +14,15 @@ const router = new VueRouter({
       component: MyHome
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/MyHome.vue')
-    }
+      path: '/groups',
+      name: 'MyGroups',
+      component: () => import('../views/MyGroups.vue')
+    },
+    {
+      path: '/group/:groupName',
+      name: 'MyGroup',
+      component: () => import('../views/MyGroup.vue')
+    },
   ]
 })
 

@@ -27,6 +27,15 @@
               </span>
             </div>
           </div>
+          <div class="field">
+            <label class="label">Fullname</label>
+            <div class="control has-icons-left has-icons-right">
+              <input class="input" type="text" placeholder="fullname" v-model="newFullname">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+            </div>
+          </div>
         </div>
         <div v-if="error" class="notification is-danger is-light mt-5">
           <button class="delete" @click="error=''"></button>
@@ -53,6 +62,7 @@ export default {
       error: '',
       newUsername: '',
       newUsernameAgain: '',
+      newFullname: '',
     }
   },
   computed: {
@@ -91,11 +101,12 @@ export default {
         username: this.myUsername,
         token: this.token,
         newUsername: this.newUsername.trim(),
+        fullname: this.newFullname.trim()
       }
       this.$http.post(this.server + '/myapp/add-new-user/', message).then(resp => {
         this.error = ''
         this.waiting = false
-        this.$emit('closeAddUserModal', true)
+        this.$emit('closeAddUserModal', this.newUsername.trim())
       }, err => {
         this.error = 'Faled to create user with username: ' + this.newUsername + '. Please try another username.'
         this.waiting = false

@@ -96,6 +96,10 @@ def check_name(name):
     if not match:
         raise PermissionDenied({'error': 'Invalid name.'})
 
+def check_quote(text):
+    if '"' in text or "'" in text:
+        raise PermissionDenied({'error': 'Contains invalid quotes.'})
+
 def check_space_or_quote(text):
     found = re.search(r"\s", text) or '"' in text or "'" in text
     if found:

@@ -3,6 +3,7 @@ const dev = process.env.NODE_ENV == 'development'
 // initial state
 export const state = {
   server: 'https://mailapp.myworkflowhub.com:444',
+  domain: 'myworkflowhub.com',
 }
 
 // mutations

@@ -8,6 +8,7 @@ urlpatterns = [
     path('add-new-user/', user_view.add_new_user, name='add-new-user'),
     path('change-password/', user_view.change_password, name='change-password'),
     path('change-role/', user_view.change_role, name='change-role'),
+    path('change-fullname/', user_view.change_fullname, name='change-fullname'),
     path('lock-user/', user_view.lock_user, name='lock-user'),
     path('unlock-user/', user_view.unlock_user, name='unlock-user'),
     path('get-org-groups/', group_view.get_org_groups, name='get-org-groups'),

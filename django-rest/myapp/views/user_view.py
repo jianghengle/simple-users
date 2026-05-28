@@ -72,7 +72,7 @@ def add_new_user(request):
     if user_exists(new_username):
         raise PermissionDenied({'error': 'User exists.'})
     fullname = request.data['fullname']
-    check_space_or_quote(fullname)
+    check_quote(fullname)
 
     sudo_cmd = 'sudo adduser --disabled-password --gecos "' + fullname + '" ' + new_username
     run_cmd(sudo_cmd)
@@ -139,6 +139,28 @@ def change_role(request):
         sudo_cmd = 'sudo usermod -aG org-admin ' + action_username
         run_cmd(sudo_cmd)
         log_sudo(sudo_cmd, username)
+
+    return Response({'ok': True})
+
+@api_view(['POST'])
+def change_fullname(request):
+    check_admin_permission(request)
+    username = request.data['username']
+
+    action_username = request.data['actionUsername']
+    check_name(action_username)
+    if not user_exists(action_username):
+        raise PermissionDenied({'error': 'Action user does not exist.'})
+
+    action_user_groups = get_user_groups(action_username)
+    if 'org-user' not in action_user_groups:
+        raise PermissionDenied({'error': 'Wrong user'})
+
+    new_fullname = request.data['newFullname']
+    check_quote(new_fullname)
+
+    sudo_cmd = 'sudo usermod -c "' + new_fullname + '" ' +  action_username
+    run_cmd(sudo_cmd)
 
     return Response({'ok': True})
 
