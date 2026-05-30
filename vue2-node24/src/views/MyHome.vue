@@ -95,7 +95,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(u, index) in allUsers" :class="{'has-background-info-light': u.username == selectedUser, 'has-shadow': u.username == selectedUser}">
+                    <tr v-for="(u, index) in allUsers" :class="{'selected': u.username == selectedUser, 'has-shadow': u.username == selectedUser}">
                       <td>
                         <div class="control">
                           <label class="radio">
@@ -105,7 +105,9 @@
                       </td>
                       <td>
                         <span class="tag is-light" :class="{'is-link': u.role == 'owner', 'is-info': u.role == 'admin'}">{{ u.role }}</span>&nbsp;
-                        <span :class="{'has-text-grey-light': u.status == 'locked', 'ml-3': u.role == 'user', 'has-text-weight-bold': selectedUser == u.username}">{{ u.username }}</span>
+                        <span class="is-clickable"  :class="{'has-text-grey-light': u.status == 'locked', 'ml-3': u.role == 'user', 'has-text-weight-bold': selectedUser == u.username}" @click="selectedUser = u.username">
+                          {{ u.username }}
+                        </span>
                       </td>
                       <td>
                         <span :class="{'has-text-grey-light': u.status == 'locked'}">{{ u.fullname }}</span>
@@ -342,4 +344,10 @@ export default {
 </script>
 
 <style scoped>
+.selected {
+  border-style: solid;
+  border-width: 1px;
+  border-color: hsl(221, 14%, 86%);
+  background-color: rgb(221 236 248) !important;
+}
 </style>

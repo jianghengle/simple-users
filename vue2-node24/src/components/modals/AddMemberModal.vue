@@ -16,7 +16,7 @@
           </div>
 
           <div class="field">
-            <label class="label">First member</label>
+            <label class="label">Select member</label>
             <div class="control">
               <div class="select">
                 <select v-model="newUsername">
