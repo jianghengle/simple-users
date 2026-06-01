@@ -20,13 +20,16 @@ export default function LandingPage() {
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <button className="rounded-2xl bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold shadow-lg transition-all">
+                <a className="rounded-2xl bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold shadow-lg transition-all" href="https://calendar.app.google/s9pWHrSXxzC98mnq6" target="_blank">
                   Book Free Assessment
-                </button>
-                
+                </a>
 
                 <a className="rounded-2xl border border-gray-300 hover:border-gray-400 px-8 py-4 text-lg font-semibold transition-all" href="https://mailadmin.myworkflowhub.com" target="_blank">
                   See How It Works
+                </a>
+
+                <a className="rounded-2xl border border-gray-300 hover:border-gray-400 px-8 py-4 text-lg font-semibold transition-all" href="https://myworkflowhub.com" target="_blank">
+                  More business solutions
                 </a>
               </div>
 
@@ -203,13 +206,9 @@ export default function LandingPage() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-            <button className="rounded-2xl bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-bold shadow-lg transition-all">
+            <a className="rounded-2xl bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-bold shadow-lg transition-all" href="https://calendar.app.google/s9pWHrSXxzC98mnq6" target="_blank">
               Schedule Consultation
-            </button>
-
-            <button className="rounded-2xl border border-white/40 hover:bg-white/10 px-8 py-4 text-lg font-bold transition-all">
-              Contact Sales
-            </button>
+            </a>
           </div>
         </div>
       </section>

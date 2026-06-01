@@ -29,7 +29,7 @@
                     <div class="buttons">
                       <button class="button is-danger is-outlined" v-if="myRole == 'owner' || myRole == 'admin'" :class="{'is-loading': removingGroup}" @click="removeGroup">Remove group</button>
                       <button class="button is-link is-outlined" v-if="myRole == 'owner' || myRole == 'admin'" :class="{'is-loading': removingMember}" :disabled="!canRemoveMember" @click="removeMember">Remove member</button>
-                      <button class="button is-link" v-if="myRole == 'owner' || myRole == 'admin'" :disabled="!usernamesToAdd.length" @click="addMemberModal.opened = true">Add member</button>
+                      <button class="button is-link" v-if="myRole == 'owner' || myRole == 'admin'" :disabled="!usernamesToAdd.length" @click="addMemberModal.opened = true">Add members</button>
                     </div>
                   </span>
                   
@@ -37,7 +37,7 @@
                     <span>
                       Members
                     </span>
-                    <span class="is-size-5 has-text-grey has-text-weight-normal">({{ groups.length }})</span>
+                    <span class="is-size-5 has-text-grey has-text-weight-normal">({{ groupUsers && groupUsers.length }})</span>
                   </h4>
                 </div>
                 <table class="table is-hoverable is-fullwidth">

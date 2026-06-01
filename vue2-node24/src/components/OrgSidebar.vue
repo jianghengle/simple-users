@@ -20,6 +20,9 @@
                 </li>
               </ul>
             </li>
+            <li>
+              <router-link :class="{'is-active': routerPath == '/mail-server'}" :to="'/mail-server'">Mail server</router-link>
+            </li>
         </ul>
       </aside>
     </section>

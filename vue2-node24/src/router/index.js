@@ -23,6 +23,11 @@ const router = new VueRouter({
       name: 'MyGroup',
       component: () => import('../views/MyGroup.vue')
     },
+    {
+      path: '/mail-server',
+      name: 'MyServer',
+      component: () => import('../views/MyServer.vue')
+    },
   ]
 })
 
