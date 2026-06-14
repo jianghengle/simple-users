@@ -17,10 +17,11 @@ export default function AwsEmailMigration() {
               <p className="mt-8 text-xl text-gray-600 leading-relaxed max-w-2xl">
                 A one-time migration and setup service for businesses affected by the AWS email shutdown. 
                 Continue using your existing AWS infrastructure without monthly migration consultants or expensive platform lock-ins.
+                Using S3 to store emails provides <strong>UNLIMITED storage capacity</strong>.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <a className="rounded-2xl bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold shadow-lg transition-all" href="https://calendar.app.google/s9pWHrSXxzC98mnq6" target="_blank">
+                <a className="rounded-2xl bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold shadow-lg transition-all" href="https://calendar.app.google/NTrK6DVQsn6stV9r5" target="_blank">
                   Book Free Assessment
                 </a>
 
@@ -206,7 +207,7 @@ export default function AwsEmailMigration() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-            <a className="rounded-2xl bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-bold shadow-lg transition-all" href="https://calendar.app.google/s9pWHrSXxzC98mnq6" target="_blank">
+            <a className="rounded-2xl bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-bold shadow-lg transition-all" href="https://calendar.app.google/NTrK6DVQsn6stV9r5" target="_blank">
               Schedule Consultation
             </a>
           </div>
