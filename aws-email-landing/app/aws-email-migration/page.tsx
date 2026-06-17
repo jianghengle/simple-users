@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function AwsEmailMigration() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -74,7 +76,7 @@ export default function AwsEmailMigration() {
                   <div className="rounded-2xl bg-gray-900 text-white p-6">
                     <p className="text-sm uppercase tracking-wide text-gray-400">Pricing Model</p>
                     <div className="mt-2 flex items-end gap-2">
-                      <span className="text-5xl font-bold">One-Time</span>
+                      <span className="text-4xl font-bold">One-Time $500</span>
                     </div>
                     <p className="mt-3 text-gray-300">
                       No recurring platform migration fees.
@@ -189,6 +191,80 @@ export default function AwsEmailMigration() {
               <div key={index} className="rounded-3xl bg-white/5 border border-white/10 p-8 backdrop-blur-sm">
                 <p className="text-2xl leading-relaxed">"{item.quote}"</p>
                 <p className="mt-6 text-gray-400">— {item.author}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="mt-6 text-xl text-gray-600">
+              Common questions about our AWS email migration service.
+            </p>
+          </div>
+
+          <div className="mt-16 space-y-6 max-w-4xl mx-auto">
+            {[
+              {   
+                question: 'Why not just migrate to Microsoft 365 or Google Workspace?',
+                answer: `Some organizations prefer to keep their email infrastructure and ownership within AWS. Our service focuses on helping customers maintain control while providing a practical migration path. And there are two other extra two benefits:<br />• You can have as many users or email accounts as you want, and there is <strong>NO cost for adding new users</strong><br />• With S3 as the email storage, there is <strong>NO capacity limitation</strong>, so you can upload as many data as you want`
+              }, 
+              {
+                question: 'Do I keep my AWS account?',
+                answer: 'Yes. Your AWS account, domains, and data remain under your ownership. We guide you through the migration and configuration process, but you maintain full control of your AWS environment.'
+              },
+              {
+                question: 'How long does the migration take?',
+                answer: 'Most migrations are completed in a single Zoom session of approximately 4 hours. Larger or more complex environments may require additional planning.'
+              },
+              {
+                question: 'Will there be any downtime?',
+                answer: 'Our process is designed to minimize disruption. Most customers experience little to no noticeable downtime during the transition.'
+              },
+              {
+                question: 'Is the service remote?',
+                answer: 'Yes. The entire migration is performed remotely through a live Zoom session with a migration specialist. No on-site visit is required.'
+              },
+              {
+                question: 'What information do I need before the session?',
+                answer: 'You should have access to your AWS account, domain DNS management, and email administration settings. During the free consultation we will confirm exactly what is needed.'
+              },
+              {
+                question: 'What happens if we run into issues?',
+                answer: 'We stay with you through troubleshooting and validation. Our goal is a successful migration, not simply completing a meeting.'
+              },
+              {
+                question: 'Is the $500 fee fixed?',
+                answer: 'Yes. The standard migration package is a one-time fixed fee of $500. If your environment requires custom work beyond the standard scope, we will discuss it before proceeding.'
+              },
+              {
+                question: 'Can you migrate multiple domains?',
+                answer: 'Yes. Multiple domains and more advanced configurations can be supported. We will review your requirements during the free consultation.'
+              },
+              {
+                question: 'Do you provide post-migration support?',
+                answer: 'Yes. After the migration we verify email flow, confirm functionality, and provide handoff documentation so your team can operate confidently.'
+              },
+            ].map((item, index) => (
+              <div key={index} className="rounded-2xl border border-gray-200 bg-white p-8 hover:border-orange-300 transition-all">
+                <h3 className="text-2xl font-bold flex items-center">
+                  <span className="text-orange-500 mr-3">Q.</span>
+                  {item.question}
+                </h3>
+                <div className="mt-4 text-gray-600 leading-relaxed flex items-start">
+                  <span className="text-green-500 mr-3 mt-1 font-bold">A.</span>
+                  {item.question === 'Why not just migrate to Microsoft 365 or Google Workspace?' ? (
+                    <div dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  ) : (
+                    <p className="whitespace-pre-line">{item.answer}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
