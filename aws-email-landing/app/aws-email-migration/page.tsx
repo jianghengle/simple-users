@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
+import FadeInSection from "./FadeInSection";
 
 export default function AwsEmailMigration() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Hero Section */}
+      <FadeInSection>
       <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-yellow-50">
         <div className="max-w-7xl mx-auto px-6 py-24 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -19,7 +21,7 @@ export default function AwsEmailMigration() {
               <p className="mt-8 text-xl text-gray-600 leading-relaxed max-w-2xl">
                 A one-time migration and setup service for businesses affected by the AWS email shutdown. 
                 Continue using your existing AWS infrastructure without monthly migration consultants or expensive platform lock-ins.
-                Using S3 to store emails provides <strong>UNLIMITED storage capacity</strong>.
+                Using S3 to store emails provides <strong>UNLIMITED storage capacity</strong> and <strong>NO COST for adding user</strong>.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -88,8 +90,10 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* Problem Section */}
+      <FadeInSection>
       <section className="py-24 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto">
@@ -125,8 +129,10 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* How It Works */}
+      <FadeInSection>
       <section className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto">
@@ -162,8 +168,10 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* Testimonials */}
+      <FadeInSection>
       <section className="py-24 bg-gray-900 text-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto">
@@ -196,8 +204,10 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* FAQ Section */}
+      <FadeInSection>
       <section className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto">
@@ -270,8 +280,10 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* CTA */}
+      <FadeInSection>
       <section className="py-24 bg-orange-500 text-white">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h2 className="text-4xl lg:text-6xl font-bold tracking-tight">
@@ -289,6 +301,7 @@ export default function AwsEmailMigration() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-10 bg-white">
