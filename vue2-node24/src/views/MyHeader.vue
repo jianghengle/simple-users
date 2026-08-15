@@ -29,7 +29,7 @@
               <span>Sign out</span>
             </a>
 
-            <a class="navbar-item" target="_blank" href="https://mailapp.myworkflowhub.com">
+            <a class="navbar-item" target="_blank" href="https://mailapp.myworkflowhub.com:8443">
               <span class="icon">
                 <i class="fas fa-envelope"></i>
               </span>

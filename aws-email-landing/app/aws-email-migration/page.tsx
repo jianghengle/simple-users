@@ -21,7 +21,7 @@ export default function AwsEmailMigration() {
               <p className="mt-8 text-xl text-gray-600 leading-relaxed max-w-2xl">
                 A one-time migration and setup service for businesses affected by the AWS email shutdown. 
                 Continue using your existing AWS infrastructure without monthly migration consultants or expensive platform lock-ins.
-                Using S3 to store emails provides <strong>UNLIMITED storage capacity</strong> and <strong>NO COST for adding user</strong>.
+                Plus, shared storage capacity for <strong>UNLIMITED users or NO COST</strong> for adding users.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -78,7 +78,7 @@ export default function AwsEmailMigration() {
                   <div className="rounded-2xl bg-gray-900 text-white p-6">
                     <p className="text-sm uppercase tracking-wide text-gray-400">Pricing Model</p>
                     <div className="mt-2 flex items-end gap-2">
-                      <span className="text-4xl font-bold">One-Time $500</span>
+                      <span className="text-4xl font-bold">One-Time</span><span>&lt; $1000</span>
                     </div>
                     <p className="mt-3 text-gray-300">
                       No recurring platform migration fees.
@@ -223,7 +223,7 @@ export default function AwsEmailMigration() {
             {[
               {   
                 question: 'Why not just migrate to Microsoft 365 or Google Workspace?',
-                answer: `Some organizations prefer to keep their email infrastructure and ownership within AWS. Our service focuses on helping customers maintain control while providing a practical migration path. And there are two other extra two benefits:<br />• You can have as many users or email accounts as you want, and there is <strong>NO cost for adding new users</strong><br />• With S3 as the email storage, there is <strong>NO capacity limitation</strong>, so you can upload as many data as you want`
+                answer: `Some organizations prefer to keep their email infrastructure and ownership within AWS. Our service focuses on helping customers maintain control while providing a practical migration path. And there are two other extra two benefits:<br />• You can have as many users or email accounts as you want, and there is <strong>NO cost for adding new users</strong><br />• Organization's shared storage capacity so <strong>NO per person capacity limitation</strong>.`
               }, 
               {
                 question: 'Do I keep my AWS account?',
