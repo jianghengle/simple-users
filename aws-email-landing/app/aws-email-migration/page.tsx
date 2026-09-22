@@ -1,8 +1,12 @@
 import { redirect } from "next/navigation";
 import FadeInSection from "./FadeInSection";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function AwsEmailMigration() {
   return (
+    <>
+    <Header />
     <div className="min-h-screen bg-white text-gray-900">
       {/* Hero Section */}
       <FadeInSection>
@@ -31,10 +35,6 @@ export default function AwsEmailMigration() {
 
                 <a className="rounded-2xl border border-gray-300 hover:border-gray-400 px-8 py-4 text-lg font-semibold transition-all" href="https://mailadmin.myworkflowhub.com" target="_blank">
                   See How It Works
-                </a>
-
-                <a className="rounded-2xl border border-gray-300 hover:border-gray-400 px-8 py-4 text-lg font-semibold transition-all" href="https://myworkflowhub.com" target="_blank">
-                  More business solutions
                 </a>
               </div>
 
@@ -303,21 +303,8 @@ export default function AwsEmailMigration() {
       </section>
       </FadeInSection>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 py-10 bg-white">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-6">
-          <div>
-            <h3 className="text-xl font-bold">AWS Email Continuity Solution</h3>
-            <p className="mt-2 text-gray-500 max-w-md">
-              Helping businesses maintain reliable email operations using their existing AWS infrastructure.
-            </p>
-          </div>
-
-          <div className="text-gray-500 text-sm">
-            © 2026 All rights reserved.
-          </div>
-        </div>
-      </footer>
     </div>
+    <Footer />
+    </>
   );
 }

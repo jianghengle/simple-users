@@ -9,6 +9,15 @@ export default function Footer() {
           <p className="text-sm">
             AWS &amp; Robotics Solutions
           </p>
+          <p className="text-sm">
+            Contact us:{" "}
+            <a
+              href="mailto:support@bee-archi.com"
+              className="text-gray-300 hover:text-white underline transition-colors"
+            >
+              support@bee-archi.com
+            </a>
+          </p>
         </div>
       </div>
     </footer>
